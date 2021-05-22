@@ -1,0 +1,10 @@
+scannerduration = "15s"
+scannerinterval = "5m"
+
+[[sensors]]
+  addr = "a4:c1:38:b4:d6:ff"
+  name = "sensor1"
+
+[[sensors]]
+  addr = "a4:c1:38:bc:01:ff"
+  name = "sensor2"
