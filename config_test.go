@@ -14,5 +14,10 @@ func TestConfig(t *testing.T) {
 	spew.Dump(viper.GetStringMap("scanner"))
 	var sensors []Sensor
 	viper.UnmarshalKey("sensors", &sensors)
+
+	var opts ScannerOptions
+	viper.UnmarshalKey("scanner", &opts)
 	spew.Dump(sensors)
+	spew.Dump(opts)
+	spew.Dump(viper.GetDuration("Scanner.Interval"))
 }
