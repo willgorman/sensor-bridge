@@ -3,11 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"math"
+	"net/http"
 	"strings"
 	"sync"
 	"syscall"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/go-ble/ble"
@@ -65,6 +68,41 @@ func (s *Sensor) String() string {
 		return fmt.Sprintf("[%s] - no reading", s.Name)
 	}
 	return fmt.Sprintf("[%s] %s (as of %s)", s.Name, s.currReading, s.updtTime.Format(time.RFC3339))
+}
+
+func (s *Sensor) IsStale() bool {
+	if s.currReading == nil {
+		return true
+	}
+	// TODO: add threshold config for updtTime too old
+	return false
+}
+
+func (s *Sensor) Temperature() float64 {
+	s.RLock()
+	defer s.RUnlock()
+	if s.currReading == nil {
+		return math.NaN()
+	}
+	return float64(s.currReading.Temp)
+}
+
+func (s *Sensor) Humidity() float64 {
+	s.RLock()
+	defer s.RUnlock()
+	if s.currReading == nil {
+		return math.NaN()
+	}
+	return float64(s.currReading.Humidity)
+}
+
+func (s *Sensor) Battery() float64 {
+	s.RLock()
+	defer s.RUnlock()
+	if s.currReading == nil {
+		return math.NaN()
+	}
+	return float64(s.currReading.Battery)
 }
 
 type Reading struct {
@@ -162,7 +200,13 @@ func main() {
 		Duration: viper.GetDuration("Scanner.Duration"),
 		Interval: viper.GetDuration("Scanner.Interval"),
 	})
-	// TODO: start a server and add prometheus endpoint
+
+	for _, s := range sensors {
+		CreateGauges(s)
+	}
+
+	http.Handle("/metrics", promhttp.Handler())
+	go http.ListenAndServe(":2112", nil)
 
 	go func() {
 		for {
