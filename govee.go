@@ -40,10 +40,11 @@ func decodeReading(a ble.Advertisement) (float32, float32, error) {
 	if err != nil {
 		return 0.0, 0.0, fmt.Errorf("parsing payload: %s", err)
 	}
-	humidity := float32((val % 1000) / 10) // TODO: doesn't seem to match iOS reading
+
+	humidity := float32(val%1000) / 10.0
 	if (val & 0x800000) != 0 {
-		return float32((val ^ 0x800000) / -10000), humidity, nil
+		return float32(val^0x800000) / -10000.0, humidity, nil
 	}
 
-	return float32(val / 10000), humidity, nil
+	return float32(val) / 10000.0, humidity, nil
 }
