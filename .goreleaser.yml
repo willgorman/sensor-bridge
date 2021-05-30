@@ -1,0 +1,40 @@
+# This is an example .goreleaser.yml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
+builds:
+  - env:
+      - CGO_ENABLED=1
+    goos:
+      - linux
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+nfpms:
+- vendor: Coaxial Flutter Labs
+  maintainer: Will Gorman<will@coaxialflutter.com>
+  description: HTTP server for exporting metrics from Bluetooth sensors
+  formats:
+  - deb
+  - rpm
+  files:
+    "scripts/systemd/sensor-bridge.service": "/etc/systemd/system/sensor-bridge.service"
+  scripts:
+    postinstall: "scripts/systemd/postinstall.sh"
+    preremove: "scripts/systemd/preremove.sh"

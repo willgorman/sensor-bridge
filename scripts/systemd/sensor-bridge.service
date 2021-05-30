@@ -1,0 +1,8 @@
+[Unit]
+Description=Bluetooth Sensor Bridge Service
+
+[Service]
+ExecStart=/usr/local/bin/sensor-bridge
+
+[Install]
+WantedBy=multi-user.target

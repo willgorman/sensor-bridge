@@ -169,6 +169,8 @@ func init() {
 	viper.AutomaticEnv()
 	viper.SetDefault("Scanner.Duration", 15*time.Second)
 	viper.SetDefault("Scanner.Interval", 5*time.Minute)
+	viper.SetDefault("prometheus.port", 2112)
+	viper.AddConfigPath("/etc/sensor-bridge")
 	viper.AddConfigPath("$HOME/.sensorbridge")
 	viper.AddConfigPath(".")
 	viper.SetConfigName("config")
@@ -206,7 +208,7 @@ func main() {
 	}
 
 	http.Handle("/metrics", promhttp.Handler())
-	go http.ListenAndServe(":2112", nil)
+	go http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("prometheus.port")), nil)
 
 	go func() {
 		for {

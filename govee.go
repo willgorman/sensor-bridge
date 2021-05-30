@@ -33,6 +33,7 @@ func (p H5102Parser) Parse(a ble.Advertisement) (*Reading, error) {
 	}, nil
 }
 
+// https://github.com/Home-Is-Where-You-Hang-Your-Hack/sensor.goveetemp_bt_hci
 func decodeReading(a ble.Advertisement) (float32, float32, error) {
 	data := a.ManufacturerData()[4:7]
 	hex := fmt.Sprintf("%X", data)
