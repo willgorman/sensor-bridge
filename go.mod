@@ -1,4 +1,4 @@
-module github.com/willgorman/govee-sensor-bridge
+module github.com/willgorman/sensor-bridge
 
 go 1.16
 
