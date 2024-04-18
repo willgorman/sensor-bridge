@@ -229,7 +229,7 @@ func main() {
 }
 
 func supportedDeviceFilter(a ble.Advertisement) bool {
-	supported := strings.HasPrefix(a.LocalName(), "GVH5102")
+	supported := strings.HasPrefix(a.LocalName(), "GVH510")
 	if supported {
 		log.Infof("allow %s: %t", a.LocalName(), supported)
 	}
